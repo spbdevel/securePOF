@@ -37,12 +37,12 @@ public class DatabaseLoader implements CommandLineRunner {
         User user2 = userRepository.save(new User("user2", "Kostia", "Ivanov", "", passwordEncoder.encode("12345"), null));
 
         Role admRole = new Role();
-        admRole.setName("ADMIN");
+        admRole.setName("ROLE_ADMIN");
         admRole = roleRepository.save(admRole);
 
         //create regular users
         Role userRole = new Role();
-        userRole.setName("USER");
+        userRole.setName("ROLE_USER");
         userRole = roleRepository.save(userRole);
 
         BiConsumer<User, Role> biConsumer = (x, y) -> {

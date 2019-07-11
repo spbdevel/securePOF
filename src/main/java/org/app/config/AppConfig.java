@@ -10,16 +10,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.util.logging.Logger;
-
-
 
 @Configuration
 @EnableTransactionManagement
 @ComponentScan(basePackages = "org.app")
 public class AppConfig {
-
-    protected static Logger log = Logger.getLogger(AppConfig.class.getName());
 
     @Autowired
     UserDetailService userDetailService;

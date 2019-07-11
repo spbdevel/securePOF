@@ -7,20 +7,19 @@
  import org.junit.Test;
  import org.junit.runner.RunWith;
  import org.springframework.beans.factory.annotation.Autowired;
- import org.springframework.boot.test.SpringApplicationConfiguration;
+ import org.springframework.boot.test.context.SpringBootTest;
  import org.springframework.context.annotation.Configuration;
  import org.springframework.security.crypto.password.PasswordEncoder;
  import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  import org.springframework.test.context.web.WebAppConfiguration;
 
- import java.util.Arrays;
  import java.util.Calendar;
  import java.util.List;
  import java.util.logging.Logger;
 
  @Configuration
  @RunWith(SpringJUnit4ClassRunner.class)
- @SpringApplicationConfiguration(classes = {AppConfig.class} )
+ @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
  @WebAppConfiguration
  public class DataTests {
      private Logger logger = Logger.getLogger(DataTests.class.getName());

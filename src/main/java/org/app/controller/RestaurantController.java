@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RequestMapping("/rest")
 @RestController()
@@ -29,7 +30,7 @@ public class RestaurantController extends AbstractController {
 
     @RequestMapping(value = "/restaurants/{restaurantId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Restaurant restaurant(@PathVariable("restaurantId")Long id) {
-        Restaurant rest = restaurantRepository.findOne(id);
+        Restaurant rest = restaurantRepository.findById(id).orElseThrow(NoSuchElementException::new);
         return rest;
     }
 
@@ -44,7 +45,7 @@ public class RestaurantController extends AbstractController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/restaurants/{restaurantId}", method = RequestMethod.DELETE)
     public Boolean del(@PathVariable("restaurantId")Long id) {
-        restaurantRepository.delete(id);
+        restaurantRepository.deleteById(id);
         return true;
     }
 

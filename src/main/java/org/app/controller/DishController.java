@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 
 @RequestMapping("/rest")
@@ -30,7 +31,7 @@ public class DishController  extends  AbstractController {
 
     @RequestMapping(value = "/dishes/{restId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Dish> dishesByRestaurant(@PathVariable("restId")Long id) {
-        Restaurant restau = restauRepository.findOne(id);
+        Restaurant restau = restauRepository.findById(id).orElseThrow(NoSuchElementException::new);
         logger.info("restau: " + restau.getName());
         return dishRepository.findByRestaurant(restau);
     }
@@ -47,7 +48,7 @@ public class DishController  extends  AbstractController {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/dishes/{restId}", method = RequestMethod.POST)
     public Dish add(@Valid @RequestBody Dish dish, @PathVariable("restId") Long rest_id) {
-        Restaurant restau = restauRepository.findOne(rest_id);
+        Restaurant restau = restauRepository.findById(rest_id).orElseThrow(NoSuchElementException::new);
         dish.setRestaurant(restau);
         Dish saved = dishRepository.save(dish);
         return saved;
@@ -56,7 +57,7 @@ public class DishController  extends  AbstractController {
     @PreAuthorize("hasRole('ADMIN')")
     @RequestMapping(value = "/dishes/{dishId}", method = RequestMethod.DELETE)
     public Boolean del(@PathVariable("dishId") Long id) {
-        dishRepository.delete(id);
+        dishRepository.deleteById(id);
         return true;
     }
 

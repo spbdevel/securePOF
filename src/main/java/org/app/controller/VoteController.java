@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @RequestMapping("/rest")
 @RestController()
@@ -55,7 +52,7 @@ public class VoteController extends AbstractController {
             vote = new Vote();
             vote.setUser(user);
         }
-        Restaurant rest = restauRepository.findOne(id);
+        Restaurant rest = restauRepository.findById(id).orElseThrow(NoSuchElementException::new);;
         vote.setRestaurant(rest);
         vote.setModified(new Date());
         voteRepository.save(vote);

@@ -1,3 +1,6 @@
+ CREATE DATABASE secure_pof CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+
 #Voting System
 ```
 Application is configured to work with H2 inmemory database (so no configuration is needed).
@@ -62,7 +65,7 @@ add menu (file menu1.json should exist in directory where curl is running)
 curl -u admin:12345  -H  "Content-Type: application/json" -X POST -d   @menu1.json  http://localhost:8081/rest/menues/{RESTAURANT_ID}
 
 activate menu
-curl -u admin:12345 -X PUT http://localhost:8081/rest/menues/{MENU_ID}?activate=true
+curl -u admin:12345 -X PUT http://localhost:8081/rest/menues/{MENU_ID}?activate=true1
 
 deactivate menu
 curl -u admin:12345 -X PUT http://localhost:8081/rest/menues/{MENU_ID}?activate=true

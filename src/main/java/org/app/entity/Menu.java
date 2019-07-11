@@ -1,7 +1,6 @@
 package org.app.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.domain.Persistable;
 
@@ -10,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "_menu", uniqueConstraints={@UniqueConstraint(columnNames={"menu_name", "restaurant_id"})})
+@Table(name = "menu", uniqueConstraints={@UniqueConstraint(columnNames={"menu_name", "restaurant_id"})})
 public class Menu implements Persistable {
 
     private Long id;

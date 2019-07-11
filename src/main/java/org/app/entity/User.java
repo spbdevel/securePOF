@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "_account")
+@Table(name = "user")
 public class User implements Persistable {
 
     private Long id;

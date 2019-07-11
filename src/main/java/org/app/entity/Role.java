@@ -7,7 +7,7 @@ import org.springframework.data.domain.Persistable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "_role")
+@Table(name = "role")
 public class Role implements Persistable {
 
     private Long id;

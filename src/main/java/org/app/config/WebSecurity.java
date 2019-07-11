@@ -1,4 +1,4 @@
-package org.app;
+package org.app.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -23,5 +23,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers("/rest/*").access("hasRole('USER') or hasRole('ADMIN')")
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).
                 and().httpBasic().and().csrf().disable();
+
     }
+
 }

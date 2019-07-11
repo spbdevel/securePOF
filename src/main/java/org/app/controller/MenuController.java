@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RequestMapping("/rest")
-@RestController()
+@RestController
 public class MenuController extends AbstractController {
 
     @Autowired

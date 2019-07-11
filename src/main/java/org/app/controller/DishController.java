@@ -6,6 +6,8 @@ import org.app.repository.DishRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -14,7 +16,7 @@ import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 
 @RequestMapping("/rest")
-@RestController()
+@RestController
 public class DishController  extends  AbstractController {
 
     private Logger logger = Logger.getLogger(DishController.class.getName());
@@ -22,9 +24,9 @@ public class DishController  extends  AbstractController {
     @Autowired
     private DishRepository dishRepository;
 
-
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @RequestMapping(value = "/dishes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Dish> dishes() {
+    public List<Dish> dishes(@AuthenticationPrincipal UserDetails user) {
         return dishRepository.findAll();
     }
 
@@ -37,7 +39,7 @@ public class DishController  extends  AbstractController {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     @RequestMapping(value = "/dishes", method = RequestMethod.POST)
     public Dish add(@Valid @RequestBody Dish dish) {
         Dish saved = dishRepository.save(dish);

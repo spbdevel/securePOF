@@ -14,7 +14,7 @@ import java.security.Principal;
 import java.util.Map;
 
 @RequestMapping("/rest")
-@RestController()
+@RestController
 public class TestController {
 
     @PreAuthorize("hasAuthority('ADMIN')")

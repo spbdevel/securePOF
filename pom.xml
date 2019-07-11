@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.elevensytsmes.pof</groupId>
+    <groupId>org.app</groupId>
     <artifactId>securePOF</artifactId>
     <version>0.5-SNAPSHOT</version>
     <packaging>war</packaging>
@@ -24,6 +24,8 @@
         <start-class>org.app.TestApplication</start-class>
         <java.version>1.8</java.version>
         <skipTests>true</skipTests>
+        <logback.level.services>INFO</logback.level.services>
+        <logback.console.appender>false</logback.console.appender>
     </properties>
 
     <dependencies>
@@ -38,10 +40,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -61,6 +59,12 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
 

@@ -1,4 +1,4 @@
-package org.app;
+package org.app.config;
 
 import org.app.service.UserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;

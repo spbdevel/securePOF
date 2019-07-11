@@ -1,5 +1,7 @@
  package org.app;
 
+ import org.app.config.AppConfig;
+ import org.app.config.WebSecurity;
  import org.app.entity.*;
  import org.app.repository.*;
  import org.junit.Assert;
@@ -7,19 +9,27 @@
  import org.junit.Test;
  import org.junit.runner.RunWith;
  import org.springframework.beans.factory.annotation.Autowired;
- import org.springframework.boot.test.context.SpringBootTest;
- import org.springframework.context.annotation.Configuration;
+ import org.springframework.context.annotation.PropertySource;
+ import org.springframework.context.annotation.PropertySources;
  import org.springframework.security.crypto.password.PasswordEncoder;
+ import org.springframework.test.context.ContextConfiguration;
  import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  import org.springframework.test.context.web.WebAppConfiguration;
+ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
  import java.util.Calendar;
  import java.util.List;
  import java.util.logging.Logger;
 
- @Configuration
  @RunWith(SpringJUnit4ClassRunner.class)
- @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
+ @ContextConfiguration(classes = {
+         WebSecurity.class,
+         AppConfig.class
+ })
+ @PropertySources({
+         @PropertySource("classpath:application.properties")
+ })
+ @EnableWebMvc
  @WebAppConfiguration
  public class DataTests {
      private Logger logger = Logger.getLogger(DataTests.class.getName());

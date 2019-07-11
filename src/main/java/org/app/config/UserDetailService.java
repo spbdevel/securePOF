@@ -1,4 +1,4 @@
-package org.app.service;
+package org.app.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;

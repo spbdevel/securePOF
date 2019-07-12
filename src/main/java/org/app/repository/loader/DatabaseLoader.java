@@ -1,7 +1,6 @@
 package org.app.repository.loader;
 
-import org.app.entity.Role;
-import org.app.entity.User;
+import org.app.entity.*;
 import org.app.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -23,6 +22,18 @@ public class DatabaseLoader implements CommandLineRunner {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RestaurantRepository restaurantRepository;
+
+    @Autowired
+    private DishRepository dishRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private AllowedFieldsRepository allowedFieldsRepository;
 
 
     @Override
@@ -53,5 +64,55 @@ public class DatabaseLoader implements CommandLineRunner {
         biConsumer.accept(admin, admRole);
         biConsumer.accept(user1, userRole);
         biConsumer.accept(user2, userRole);
+
+        initData();
     }
+
+
+    public void initData() {
+        String restName = "restaurant 1";
+        String dishName = "dish1";
+        String menuName = "menu 1";
+
+        //create restaurant
+        Restaurant rest = restaurantRepository.findByName(restName);
+        if(rest != null) {
+            return;
+        }
+        rest = new Restaurant();
+        rest.setName(restName);
+        rest.setDescription("desc restaurant 1");
+        restaurantRepository.save(rest);
+        rest = restaurantRepository.findByName(restName);
+
+        //create dish
+        Dish dish = new Dish();
+        dish.setName(dishName);
+        dish.setDescription("desc dish 1");
+        dish.setRestaurant(rest);
+        dish.setPrice(100.0);
+        dishRepository.save(dish);
+
+        //create menu
+        Menu menu = new Menu();
+        menu.setName(menuName);
+        menu.setActiveToday(true);
+        menu.setDescription("description 1");
+        menu.setRestaurant(restaurantRepository.findByName(restName));
+        menuRepository.save(menu);
+
+        AllowedFields afs = new AllowedFields();
+        afs.setFieldList("id, restaurant, name, description, price");
+        afs.setObjectName("dish");
+        afs.setRole(roleRepository.findByName("ROLE_ADMIN"));
+        AllowedFields save = allowedFieldsRepository.save(afs);
+
+
+        afs = new AllowedFields();
+        afs.setFieldList("name, description");
+        afs.setObjectName("dish");
+        afs.setRole(roleRepository.findByName("ROLE_USER"));
+        save = allowedFieldsRepository.save(afs);
+    }
+
 }

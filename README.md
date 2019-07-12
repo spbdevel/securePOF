@@ -45,7 +45,7 @@ USER:
 curl -u user1:12345 http://localhost:8081/rest/dishes
 (should get dishes with nullified fields)
 
-someone withour role (same as anonymous)
+someone without role (same as anonymous)
 curl -u user1:12345 http://localhost:8081/rest/dishes
 (should get unauthorized error)
 

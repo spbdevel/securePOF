@@ -10,6 +10,12 @@
  * create database with this command
     CREATE DATABASE secure_pof CHARACTER SET utf8 COLLATE utf8_general_ci;
 
+ * edit connection properties:
+    spring.datasource.url=jdbc:mysql://localhost:3306/secure_pof?useUnicode=yes&amp;amp;characterEncoding=UTF-8&amp;amp;useSSL=true&amp;amp;verifyServerCertificate=false
+    spring.datasource.username=username
+    spring.datasource.password=pass
+
+
  * to prepare package run in root project folder this command:
     mvn clean package
 

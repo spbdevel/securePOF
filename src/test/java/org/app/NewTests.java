@@ -63,20 +63,11 @@
          //BeanUtils.copyProperties(dish, dishCleaned, split);
          //BeanUtils.copyProperties(dish, dishCleaned, split);
 
-         copyProperties2(dish, dishCleaned, fields);
+         Util.copyProperties(dish, dishCleaned, fields);
 
          System.out.println(dishCleaned);
      }
 
-     public static void copyProperties2(Object src, Object trg, Collection<String> props) {
-         String[] excludedProperties =
-                 Arrays.stream(BeanUtils.getPropertyDescriptors(src.getClass()))
-                         .map(PropertyDescriptor::getName)
-                         .filter(name -> !props.contains(name))
-                         .toArray(String[]::new);
-
-         BeanUtils.copyProperties(src, trg, excludedProperties);
-     }
 
      @Test
      public void initFields() {

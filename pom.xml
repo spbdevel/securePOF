@@ -6,7 +6,7 @@
     <groupId>org.app</groupId>
     <artifactId>securePOF</artifactId>
     <version>0.5-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <name>Secure POF</name>
     <description>test project</description>

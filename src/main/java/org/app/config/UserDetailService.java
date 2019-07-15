@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import org.app.entity.Role;
 import org.app.entity.User;
 import org.app.repository.UserRepository;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserDetailService implements UserDetailsService {
@@ -26,15 +26,15 @@ public class UserDetailService implements UserDetailsService {
         User user = userRepository.findByAccountName(username);
         Optional<User> opt = Optional.ofNullable(user);
         if (!opt.isPresent()) {
-            throw new UsernameNotFoundException("username not found");
+            throw new UsernameNotFoundException(user.getAccountName());
         }
-        Collection<Role> roles = Collections.synchronizedList(user.getRoles());
-        StringBuffer sb = new StringBuffer();
-        roles.stream().forEach(e -> {
-            if(sb.length() !=0) sb.append(", ");
-            sb.append(e.getName());
-        });
-        List<GrantedAuthority> auth = AuthorityUtils.createAuthorityList(sb.toString());
+
+        List<String> auths = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
+        String[] roles = new String[auths.size()];
+        auths.toArray(roles);
+
+        List<GrantedAuthority> auth = auths.size() > 0 ?
+                AuthorityUtils.createAuthorityList(roles) : Collections.EMPTY_LIST ;
         String password = user.getPassword();
         return new org.springframework.security.core.userdetails.User(username, password, auth);
     }

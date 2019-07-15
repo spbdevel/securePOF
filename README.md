@@ -10,7 +10,7 @@
  * create database with this command
     CREATE DATABASE secure_pof CHARACTER SET utf8 COLLATE utf8_general_ci;
 
- * edit connection properties:
+ * edit connection in application.properties:
     spring.datasource.url=jdbc:mysql://localhost:3306/secure_pof?useUnicode=yes&amp;amp;characterEncoding=UTF-8&amp;amp;useSSL=true&amp;amp;verifyServerCertificate=false
     spring.datasource.username=username
     spring.datasource.password=pass
@@ -52,7 +52,7 @@ curl -u user1:12345 http://localhost:8081/rest/dishes
 (should get dishes with nullified fields)
 
 someone without role (same as anonymous)
-curl -u user1:12345 http://localhost:8081/rest/dishes
+curl -u frodo:12345 http://localhost:8081/rest/dishes
 (should get unauthorized error)
 
 

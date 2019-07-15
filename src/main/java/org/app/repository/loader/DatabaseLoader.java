@@ -7,7 +7,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
@@ -35,6 +34,20 @@ public class DatabaseLoader implements CommandLineRunner {
     @Autowired
     private AllowedFieldsRepository allowedFieldsRepository;
 
+    BiConsumer<User, Role> biConsumer = (x, y) -> {
+        x.getRoles().add(y);
+        userRepository.save(x);
+    };
+
+/*
+
+    @Override
+    public void run(String... strings) throws Exception {
+        User user2 = userRepository.findByAccountName("user2");
+        Role role_user = roleRepository.findByName("ROLE_USER");
+        biConsumer.accept(user2, role_user);
+    }
+*/
 
     @Override
     public void run(String... strings) throws Exception {
@@ -56,14 +69,15 @@ public class DatabaseLoader implements CommandLineRunner {
         userRole.setName("ROLE_USER");
         userRole = roleRepository.save(userRole);
 
-        BiConsumer<User, Role> biConsumer = (x, y) -> {
-            x.setRoles(Arrays.asList(y));
-            userRepository.save(x);
-        };
+        Role editorRole = new Role();
+        editorRole .setName("ROLE_EDITOR");
+        editorRole = roleRepository.save(editorRole );
+
 
         biConsumer.accept(admin, admRole);
         biConsumer.accept(user1, userRole);
         biConsumer.accept(user2, userRole);
+        biConsumer.accept(user2, editorRole);
 
         initData();
     }

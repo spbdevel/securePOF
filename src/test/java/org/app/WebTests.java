@@ -46,7 +46,7 @@ public class WebTests {
 
 
     @Test
-    @WithUserDetails("admin")
+    @WithUserDetails("user2")
     public void checkDishes() throws Exception {
         URI uri = new URI("/rest/dishes");
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.get(uri);

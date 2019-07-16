@@ -61,6 +61,42 @@ public class WebTests {
         System.out.println("response: " + serializeToJson(jsonNode));
     }
 
+    @Test
+    @WithUserDetails("user2")
+    public void checkField() throws Exception {
+        URI uri = new URI("/rest/fields/16");
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.get(uri);
+        mockHttpServletRequestBuilder.contentType(MediaType.APPLICATION_JSON_VALUE);
+        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+
+        ResultActions res = mockMvc.perform(mockHttpServletRequestBuilder);
+        MockHttpServletResponse response = res.andReturn().getResponse();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(response.getContentAsString());
+        System.out.println("response: " + serializeToJson(jsonNode));
+    }
+
+
+    @Test
+    @WithUserDetails("admin")
+    public void createFieldPermission() throws Exception {
+        URI uri = new URI("/rest/fields/13");
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(uri);
+        mockHttpServletRequestBuilder.contentType(MediaType.APPLICATION_JSON_VALUE);
+        mockHttpServletRequestBuilder.param("roleId", "12");
+        mockHttpServletRequestBuilder.param("type", "VIEW");
+        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+
+        ResultActions res = mockMvc.perform(mockHttpServletRequestBuilder);
+        MockHttpServletResponse response = res.andReturn().getResponse();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(response.getContentAsString());
+        System.out.println("response: " + serializeToJson(jsonNode));
+    }
+
+
     private String serializeToJson(Object d) throws JsonProcessingException {
         SimpleModule module = new SimpleModule();
         ObjectMapper mapper = new ObjectMapper();

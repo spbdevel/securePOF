@@ -2,15 +2,10 @@
 
  import org.app.config.AppConfig;
  import org.app.config.WebSecurity;
- import org.app.entity.AllowedFields;
- import org.app.entity.Dish;
- import org.app.entity.Role;
- import org.app.repository.AllowedFieldsRepository;
- import org.app.repository.DishRepository;
- import org.app.repository.RoleRepository;
+ import org.app.entity.*;
+ import org.app.repository.*;
  import org.junit.Test;
  import org.junit.runner.RunWith;
- import org.springframework.beans.BeanUtils;
  import org.springframework.beans.factory.annotation.Autowired;
  import org.springframework.context.annotation.PropertySource;
  import org.springframework.context.annotation.PropertySources;
@@ -20,9 +15,7 @@
  import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
  import java.beans.PropertyDescriptor;
- import java.util.Arrays;
- import java.util.Collection;
- import java.util.List;
+ import java.util.*;
  import java.util.logging.Logger;
 
  @RunWith(SpringJUnit4ClassRunner.class)
@@ -47,6 +40,15 @@
 
      @Autowired
      private DishRepository dishRepository;
+
+     @Autowired
+     private UserRepository userRepository;
+
+     @Autowired
+     private UserDataRepository userDataRepository;
+
+     @Autowired
+     private UserFieldRepository userFieldRepository;
 
 
 
@@ -86,5 +88,42 @@
 
 
      }
+
+     @Test
+     public void initUserFields() {
+         UserField uf = new UserField();
+         uf.setApiName("birthdate");
+         uf.setType(UserField.TypeEnum.form_field );
+         uf.setCategory(UserField.Category.contact_information);
+         uf.setLayoutMetadata("{\"type\": \"date\", \"size\": 2}");
+
+         uf = userFieldRepository.save(uf);
+
+         User user2 = userRepository.findByAccountName("user2");
+         UserData  userData = new UserData();
+         userData.setCreated(new Date());
+         userData.setField(uf);
+         userData.setUser(user2);
+         userData.setModified(new Date());
+         userData.setModifiedBy(user2);
+         userData.setValue("01-01-1980");
+         userData = userDataRepository.save(userData);
+
+         userData.getId();
+
+     }
+
+     @Test
+     public void userFieldsData() {
+         UserField one = userFieldRepository.findById(13L).get();
+         String layoutMetadata = one.getLayoutMetadata();
+         layoutMetadata.length();
+
+         UserData byId = userDataRepository.findById(16L).get();
+         User user = byId.getUser();
+         user.getId();
+
+     }
+
 
  }

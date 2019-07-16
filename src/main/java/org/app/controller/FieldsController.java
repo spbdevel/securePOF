@@ -1,20 +1,16 @@
 package org.app.controller;
 
-import org.app.entity.FieldPermission;
-import org.app.entity.Role;
-import org.app.entity.UserData;
-import org.app.entity.UserField;
-import org.app.repository.FieldPermissionRepository;
-import org.app.repository.RoleRepository;
-import org.app.repository.UserDataRepository;
-import org.app.repository.UserFieldRepository;
+import org.app.entity.*;
+import org.app.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -22,6 +18,9 @@ import java.util.Optional;
 @RestController
 public class FieldsController extends  AbstractController {
 
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private UserFieldRepository userFieldRepository;
@@ -38,12 +37,21 @@ public class FieldsController extends  AbstractController {
 
     @PreAuthorize("hasAnyRole('USER','ADMIN', 'EDITOR')")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public UserField fields(@AuthenticationPrincipal UserDetails user, @PathVariable Long id) {
+    public String fields(@AuthenticationPrincipal UserDetails user, @PathVariable Long id) {
         UserData userData = userDataRepository.findById(id).get();
 
         UserField one = userData.getField();
+        User accnt = userRepository.findByAccountName(user.getUsername());
 
-        return one;
+        List<Role> roles = accnt.getRoles();
+        Optional<FieldPermission> found = roles.stream().map(role ->
+                fieldPermissionRepository.findByFieldAndRole(one, role)
+        ).filter(f -> f.isPresent() && FieldPermission.ACCESS_TYPE.VIEW.equals(f.get().getAccessType()))
+                .map(Optional::get)
+                .findFirst();
+
+        found.orElseThrow(() -> new AccessDeniedException("not found or access is denied"));
+        return userData.getValue();
     }
 
 

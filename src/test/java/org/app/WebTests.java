@@ -72,16 +72,14 @@ public class WebTests {
         ResultActions res = mockMvc.perform(mockHttpServletRequestBuilder);
         MockHttpServletResponse response = res.andReturn().getResponse();
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(response.getContentAsString());
-        System.out.println("response: " + serializeToJson(jsonNode));
+        System.out.println("response: " + response.getContentAsString());
     }
 
 
     @Test
     @WithUserDetails("admin")
     public void createFieldPermission() throws Exception {
-        URI uri = new URI("/rest/fields/13");
+        URI uri = new URI("/rest/fields/15");
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(uri);
         mockHttpServletRequestBuilder.contentType(MediaType.APPLICATION_JSON_VALUE);
         mockHttpServletRequestBuilder.param("roleId", "12");

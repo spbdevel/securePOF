@@ -1,12 +1,16 @@
 package org.app.config;
 
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cache.ehcache.EhCacheFactoryBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.acls.AclPermissionEvaluator;
@@ -30,27 +34,25 @@ public class AclMethodSecurityConfiguration
     @Autowired
     MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler;
 
+    @Autowired
+    DataSource dataSource;
 
-    @Value("${spring.datasource.username}")
-    private String username;
 
-    @Value("${spring.datasource.password}")
-    private String pass;
-
-    @Value("${spring.datasource.url}")
-    private String url;
-
-    @Value("${spring.datasource.driver-class-name}")
-    private String driver;
-
-    public DataSource getDataSource() {
-        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.driverClassName(driver);
-        dataSourceBuilder.url(url);
-        dataSourceBuilder.username(username);
-        dataSourceBuilder.password(pass);
-        return dataSourceBuilder.build();
+    @Bean
+    @Primary
+    @ConfigurationProperties("app.datasource")
+    public DataSourceProperties dataSourceProperties() {
+        return new DataSourceProperties();
     }
+
+
+
+    @Bean
+    @ConfigurationProperties("app.datasource.configuration")
+    public DataSource dataSource(DataSourceProperties properties) {
+        return properties.initializeDataSourceBuilder().type(HikariDataSource.class).build();
+    }
+
 
     @Override
     protected MethodSecurityExpressionHandler createExpressionHandler() {
@@ -58,18 +60,19 @@ public class AclMethodSecurityConfiguration
     }
 
     @Bean
-    public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler() {
+    @DependsOn({"dataSource"})
+    public MethodSecurityExpressionHandler defaultMethodSecurityExpressionHandler(@Qualifier("dataSource") final DataSource dataSource) {
         DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
         AclPermissionEvaluator permissionEvaluator
-                = new AclPermissionEvaluator(aclService());
+                = new AclPermissionEvaluator(aclService(dataSource));
         expressionHandler.setPermissionEvaluator(permissionEvaluator);
         return expressionHandler;
     }
 
 
     @Bean
-    public JdbcMutableAclService aclService() {
-        return new JdbcMutableAclService(getDataSource(), lookupStrategy(), aclCache());
+    public JdbcMutableAclService aclService(@Qualifier("dataSource") final DataSource dataSource) {
+        return new JdbcMutableAclService(dataSource, lookupStrategy(dataSource), aclCache());
     }
 
 
@@ -108,9 +111,9 @@ public class AclMethodSecurityConfiguration
     }
 
     @Bean
-    public LookupStrategy lookupStrategy() {
+    public LookupStrategy lookupStrategy(DataSource dataSource) {
         return new BasicLookupStrategy(
-                getDataSource(),
+                dataSource,
                 aclCache(),
                 aclAuthorizationStrategy(),
                 new ConsoleAuditLogger()

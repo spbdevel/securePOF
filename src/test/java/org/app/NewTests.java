@@ -99,7 +99,8 @@
 
          uf = userFieldRepository.save(uf);
 
-         User user2 = userRepository.findByAccountName("user2");
+         User user2 = userRepository.findByAccountName("user2").
+                 orElseThrow(() -> new IllegalArgumentException("username not found"));;
          UserData  userData = new UserData();
          userData.setCreated(new Date());
          userData.setField(uf);

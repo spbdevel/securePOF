@@ -44,7 +44,8 @@ public class VoteController extends AbstractController {
             throw new Exception("It is too late to vote");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String name = auth.getName();
-        User user = userRepository.findByAccountName(name);
+        User user = userRepository.findByAccountName(name).
+                orElseThrow(() -> new IllegalArgumentException("username not found"));;
 
         List<Date> timeFrame = getTimeFrame();
         Vote vote = voteRepository.findByUserToday(user, timeFrame.get(0), timeFrame.get(1));

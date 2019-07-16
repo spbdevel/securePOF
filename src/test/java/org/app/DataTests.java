@@ -135,7 +135,8 @@
 
      @Test
      public void checkVote() {
-         User user = userRepository.findByAccountName(adminName);
+         User user = userRepository.findByAccountName(adminName).
+                 orElseThrow(() -> new IllegalArgumentException("username not found"));;
          Vote vote = voteRepository.findByUserAndModified(user, instance.getTime());
          Assert.assertNotNull(vote);
 

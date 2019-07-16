@@ -51,7 +51,8 @@ public class DatabaseLoader implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        User frodo = userRepository.findByAccountName("frodo");
+        User frodo = userRepository.findByAccountName("frodo").
+                orElseThrow(() -> new IllegalArgumentException("username not found"));
         Optional<User> opt = Optional.ofNullable(frodo);
         if(opt.isPresent())
             return;

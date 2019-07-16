@@ -38,12 +38,15 @@ public class FieldsController extends  AbstractController {
     @PreAuthorize("hasAnyRole('USER','ADMIN', 'EDITOR')")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String fields(@AuthenticationPrincipal UserDetails user, @PathVariable Long id) {
-        UserData userData = userDataRepository.findById(id).get();
+        UserData userData =  userDataRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("user data does not exist"));
 
         UserField one = userData.getField();
-        User accnt = userRepository.findByAccountName(user.getUsername());
+        User accnt = userRepository.findByAccountName(user.getUsername()).
+                orElseThrow(() -> new IllegalArgumentException("username not found"));;
 
         List<Role> roles = accnt.getRoles();
+
         Optional<FieldPermission> found = roles.stream().map(role ->
                 fieldPermissionRepository.findByFieldAndRole(one, role)
         ).filter(f -> f.isPresent() && FieldPermission.ACCESS_TYPE.VIEW.equals(f.get().getAccessType()))

@@ -38,7 +38,8 @@ public class DishController  extends  AbstractController {
     public List<Dish> dishes(@AuthenticationPrincipal UserDetails user) {
         List<Dish> all = dishRepository.findAll();
 
-        User curUser = userRepository.findByAccountName(user.getUsername());
+        User curUser = userRepository.findByAccountName(user.getUsername()).
+                orElseThrow(() -> new IllegalArgumentException("username not found"));;
         List<Role> roles = curUser.getRoles();
         List<Dish> res = all.stream().map(d -> {
             Dish dish = new Dish();

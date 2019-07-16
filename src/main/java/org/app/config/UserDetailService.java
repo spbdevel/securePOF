@@ -23,7 +23,8 @@ public class UserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByAccountName(username);
+        User user = userRepository.findByAccountName(username).
+                orElseThrow(() -> new IllegalArgumentException("username not found"));
         Optional<User> opt = Optional.ofNullable(user);
         if (!opt.isPresent()) {
             throw new UsernameNotFoundException(user.getAccountName());

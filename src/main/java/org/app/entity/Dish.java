@@ -2,6 +2,7 @@ package org.app.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.ColumnTransformer;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.domain.Persistable;
 
@@ -12,6 +13,9 @@ import javax.validation.constraints.NotNull;
 @Table(name = "dish", uniqueConstraints={@UniqueConstraint(columnNames={"dish_name", "restaurant_id"})})
 public class Dish implements Persistable {
 
+    public static final String MYSECRET = "mysecret";
+    public static final String AES_DESCRIPTION_DECRYPT = "cast(aes_decrypt(description, '" + MYSECRET +"') as char(255))";
+    public static final String AES_ENCRYPT = "aes_encrypt(?, '"+ MYSECRET +"')";
     private Long id;
     private Restaurant restaurant;
     private String name;
@@ -39,7 +43,6 @@ public class Dish implements Persistable {
         this.name = name;
     }
 
-    //@JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_id", columnDefinition = "bigint not null", nullable = false)
     public Restaurant getRestaurant() {
@@ -50,7 +53,10 @@ public class Dish implements Persistable {
         this.restaurant = restaurant;
     }
 
-   @Length(max = 50)
+    @ColumnTransformer(
+            read = AES_DESCRIPTION_DECRYPT,
+            write = AES_ENCRYPT
+    )    @Length(max = 50)
    public String getDescription() {
         return description;
     }

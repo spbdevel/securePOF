@@ -17,7 +17,9 @@
  import org.springframework.test.context.web.WebAppConfiguration;
  import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+ import java.util.Arrays;
  import java.util.Calendar;
+ import java.util.HashSet;
  import java.util.List;
  import java.util.logging.Logger;
 
@@ -43,14 +45,13 @@
      @Autowired
      private RestaurantRepository restaurantRepository;
 
-     @Autowired
-     private MenuRepository menuRepository;
 
      @Autowired
      private UserRepository userRepository;
 
+
      @Autowired
-     private VoteRepository voteRepository;
+     private PrivilegeRepository privilegeRepository;
 
 
      private final String restName = "restaurant 1";
@@ -59,7 +60,7 @@
      private final String adminName = "admin";
      private Calendar instance = Calendar.getInstance();
 
-     @Before
+     //@Before
      public void initData() {
          instance.set(Calendar.SECOND, 0);
          instance.set(Calendar.MILLISECOND, 0);
@@ -86,35 +87,57 @@
          dish.setPrice(100.0);
          dishRepository.save(dish);
 
-         //create menu
-         Menu menu = new Menu();
-         menu.setName(menuName);
-         menu.setActiveToday(true);
-         menu.setDescription("description 1");
-         menu.setRestaurant(restaurantRepository.findByName(restName));
-         menuRepository.save(menu);
 
      }
 
 
      @Test
-     public void checkMenuFinds() {
+     public void createDish() {
          //find by restaurant
          Restaurant rest = restaurantRepository.findByName(restName);
-         List<Menu> menus = menuRepository.findByRestaurant(rest);
-         Assert.assertNotNull(menus);
-         logger.info("menus size: " + menus.size());
 
-         //find existing
-         Menu menu = menuRepository.findByName(menuName);
-         Assert.assertNotNull(menu);
-         //find not existing
-         menu = menuRepository.findByName("no_name");
-         Assert.assertNull(menu);
-
-         List<Menu> list = menuRepository.findByActiveToday(true);
-         Assert.assertNotNull(list);
+         Dish dish = new Dish();
+         dish.setName("new dish");
+         dish.setDescription("desc asdf 2");
+         dish.setRestaurant(rest);
+         dish.setPrice(110.0);
+         Dish save = dishRepository.save(dish);
+         save.getId();
      }
+
+     @Test
+     public void getDish() {
+         Dish byId = dishRepository.findById(41L).get();
+         System.out.println(byId.getDescription());
+     }
+
+
+     @Test
+     public void initPriviliges() {
+         Privilege privilege1 = new Privilege();
+         privilege1.setName("FOO_READ_PRIVILEGE");
+         privilegeRepository.save(privilege1);
+
+         Privilege privilege2 = new Privilege();
+         privilege2.setName("FOO_WRITE_PRIVILEGE");
+         privilegeRepository.save(privilege2);
+
+         privilege1 = privilegeRepository.findByName("FOO_READ_PRIVILEGE").get();
+         privilege2 = privilegeRepository.findByName("FOO_WRITE_PRIVILEGE").get();
+
+         User user1 = userRepository.findByAccountName("user1").
+                 orElseThrow(() -> new IllegalArgumentException("username not found"));
+         User user2 = userRepository.findByAccountName("user2").
+                 orElseThrow(() -> new IllegalArgumentException("username not found"));
+
+         user2.setPrivileges(new HashSet<>(Arrays.asList(privilege1, privilege2)));
+         user2 = userRepository.save(user2);
+         user1.setPrivileges(new HashSet<>(Arrays.asList(privilege1)));
+         user1 = userRepository.save(user1);
+         user1.getRoles();
+     }
+
+
 
 
      @Test
@@ -133,20 +156,6 @@
          Assert.assertNull(dish);
      }
 
-     @Test
-     public void checkVote() {
-         User user = userRepository.findByAccountName(adminName).
-                 orElseThrow(() -> new IllegalArgumentException("username not found"));;
-         Vote vote = voteRepository.findByUserAndModified(user, instance.getTime());
-         Assert.assertNotNull(vote);
-
-         List<Vote> votes = voteRepository.findByUser(user);
-         Assert.assertNotNull(votes);
-         logger.info("dishes size: " + votes.size());
-
-         vote = voteRepository.findByUserTodayBeforeTime(user, instance.getTime());
-         Assert.assertNotNull(vote);
-     }
 
 
      @Test

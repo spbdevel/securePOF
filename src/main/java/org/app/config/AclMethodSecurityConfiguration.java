@@ -26,8 +26,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import javax.sql.DataSource;
 
 
-@Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+//@Configuration
+//@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class AclMethodSecurityConfiguration
         extends GlobalMethodSecurityConfiguration {
 

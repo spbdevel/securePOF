@@ -28,8 +28,6 @@ public class DatabaseLoader implements CommandLineRunner {
     @Autowired
     private DishRepository dishRepository;
 
-    @Autowired
-    private MenuRepository menuRepository;
 
     @Autowired
     private AllowedFieldsRepository allowedFieldsRepository;
@@ -108,13 +106,6 @@ public class DatabaseLoader implements CommandLineRunner {
         dish.setPrice(100.0);
         dishRepository.save(dish);
 
-        //create menu
-        Menu menu = new Menu();
-        menu.setName(menuName);
-        menu.setActiveToday(true);
-        menu.setDescription("description 1");
-        menu.setRestaurant(restaurantRepository.findByName(restName));
-        menuRepository.save(menu);
 
         AllowedFields afs = new AllowedFields();
         afs.setFieldList("id, restaurant, name, description, price");

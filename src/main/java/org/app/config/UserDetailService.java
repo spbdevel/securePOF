@@ -1,5 +1,6 @@
 package org.app.config;
 
+import org.app.entity.Privilege;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -31,6 +32,9 @@ public class UserDetailService implements UserDetailsService {
         }
 
         List<String> auths = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
+        List<String> priviliges = user.getPrivileges().stream().map(Privilege::getName).collect(Collectors.toList());
+        auths.addAll(priviliges);
+
         String[] roles = new String[auths.size()];
         auths.toArray(roles);
 

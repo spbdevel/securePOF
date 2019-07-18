@@ -5,8 +5,11 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.app.config.AppConfig;
 import org.app.config.WebSecurity;
+import org.app.entity.UserField;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,8 +65,8 @@ public class WebTests {
     }
 
     @Test
-    @WithUserDetails("user2")
-    public void checkField() throws Exception {
+    @WithUserDetails("user1")
+    public void userData() throws Exception {
         URI uri = new URI("/rest/fields/16");
         MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.get(uri);
         mockHttpServletRequestBuilder.contentType(MediaType.APPLICATION_JSON_VALUE);
@@ -73,6 +76,46 @@ public class WebTests {
         MockHttpServletResponse response = res.andReturn().getResponse();
 
         System.out.println("response: " + response.getContentAsString());
+    }
+
+    @Test
+    @WithUserDetails("admin")
+    public void allField() throws Exception {
+        URI uri = new URI("/rest/fields/all");
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.get(uri);
+        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+
+        ResultActions res = mockMvc.perform(mockHttpServletRequestBuilder);
+        MockHttpServletResponse response = res.andReturn().getResponse();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(response.getContentAsString());
+        System.out.println("response: " + serializeToJson(jsonNode));
+    }
+
+    @Test
+    @WithUserDetails("user2")
+    public void createField() throws Exception {
+        URI uri = new URI("/rest/fields");
+        MockHttpServletRequestBuilder mockHttpServletRequestBuilder = MockMvcRequestBuilders.post(uri);
+        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        UserField uf = new UserField();
+        uf.setApiName("birthdate");
+        uf.setType(UserField.TypeEnum.form_field );
+        uf.setCategory(UserField.Category.contact_information);
+        uf.setLayoutMetadata("{\"type\": \"date\", \"size\": 2}");
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        Gson gson = gsonBuilder.create();
+        String s = gson.toJson(uf);
+
+        mockHttpServletRequestBuilder.content(s);
+        ResultActions res = mockMvc.perform(mockHttpServletRequestBuilder);
+        MockHttpServletResponse response = res.andReturn().getResponse();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(response.getContentAsString());
+        System.out.println("response: " + serializeToJson(jsonNode));
     }
 
 

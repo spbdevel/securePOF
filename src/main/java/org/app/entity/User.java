@@ -5,10 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.domain.Persistable;
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
-public class User implements Persistable {
+public class User {
 
     private Long id;
     private String accountName;
@@ -17,7 +18,7 @@ public class User implements Persistable {
     private String description;
     private String password;
     private List<Role> roles;
-    private boolean isNew = false;
+    private Set<Privilege> privileges;
 
     public User(){}
 
@@ -100,14 +101,18 @@ public class User implements Persistable {
         this.roles = roles;
     }
 
-    @JsonIgnore
-    @Transient
-    @Override
-    public boolean isNew() {
-        return isNew;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "users_privileges",
+            joinColumns =
+            @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns =
+            @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
+    public Set<Privilege> getPrivileges() {
+        return privileges;
     }
 
-    public void setNew(boolean aNew) {
-        isNew = aNew;
+    public void setPrivileges(Set<Privilege> privileges) {
+        this.privileges = privileges;
     }
 }

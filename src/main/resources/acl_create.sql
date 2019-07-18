@@ -94,3 +94,37 @@ ALTER TABLE `acl_object_identity`
   ADD CONSTRAINT `foreign_fk_1` FOREIGN KEY (`parent_object`) REFERENCES `acl_object_identity` (`id`),
   ADD CONSTRAINT `foreign_fk_2` FOREIGN KEY (`object_id_class`) REFERENCES `acl_class` (`id`),
   ADD CONSTRAINT `foreign_fk_3` FOREIGN KEY (`owner_sid`) REFERENCES `acl_sid` (`id`);
+
+
+--insert some test settings
+
+
+INSERT INTO acl_sid (id, principal, sid) VALUES
+  (1, 0, 'ROLE_ADMIN'),
+  (2, 0, 'ROLE_USER'),
+  (3, 0, 'ROLE_EDITOR');
+
+INSERT INTO acl_class (id, class) VALUES (1, 'org.app.entity.UserField');
+
+
+INSERT INTO acl_object_identity
+  (id, object_id_class, object_id_identity,
+                parent_object, owner_sid, entries_inheriting)
+  VALUES
+  (1, 1, 13,        NULL, 3, 0),
+  (2, 1, 15,        NULL, 3, 0),
+  (3, 1, 17,        NULL, 3, 0);
+
+
+INSERT INTO acl_entry
+  (id, acl_object_identity, ace_order,
+                sid, mask, granting, audit_success, audit_failure)
+  VALUES
+  (1, 1, 1,      1, 1, 1, 1, 1),
+  (2, 1, 2,      1, 2, 1, 1, 1),
+  (3, 1, 3,      3, 1, 1, 1, 1),
+  (4, 2, 1,      2, 1, 1, 1, 1),
+  (5, 2, 2,      3, 1, 1, 1, 1),
+  (6, 3, 1,      3, 1, 1, 1, 1),
+  (7, 3, 2,      3, 2, 1, 1, 1);
+
